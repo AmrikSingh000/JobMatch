@@ -1,0 +1,12 @@
+@model JobMatch.Models.Job
+@{
+    ViewData["Title"] = "Apply";
+}
+<h2>Apply to @Model?.Title</h2>
+<p><strong>@Model?.Organization</strong> — @Model?.Location</p>
+
+<form asp-action="Create" asp-controller="Applications" method="post">
+    <input type="hidden" name="jobId" value="@Model?.Id" />
+    <button type="submit" class="btn btn-primary">Submit Application</button>
+    <a asp-controller="Jobs" asp-action="Index" class="btn btn-secondary ms-2">Back to Jobs</a>
+</form>

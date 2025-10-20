@@ -1,0 +1,20 @@
+/* Quick styles for the project demo; prioritized readability. */
+:root{
+  --brand:#1565c0; --brand-600:#0d47a1; --ink:#0f172a; --muted:#475569;
+  --line:#e2e8f0; --bg:#f8fafc; --card:#ffffff; --accent:#10b981; --warn:#f59e0b;
+  --radius:14px; --shadow:0 6px 18px rgba(0,0,0,.06);
+}
+body{ background:var(--bg); color:var(--ink); }
+a{ color:var(--brand); } a:hover{ color:var(--brand-600); }
+.navbar{ box-shadow:var(--shadow); } .navbar-brand{ font-weight:700; letter-spacing:.3px; }
+.btn-brand{ background:var(--brand); color:#fff; border:none; }
+.btn-brand:hover{ background:var(--brand-600); color:#fff; }
+.card-job{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); transition: box-shadow .2s, transform .04s; }
+.card-job:hover{ box-shadow:0 10px 22px rgba(0,0,0,.1); transform: translateY(-1px); }
+.badge-chip{ border:1px solid var(--line); background:#fff; border-radius:999px; padding:.35rem .6rem; font-weight:500; color:var(--muted); display:inline-flex; gap:.4rem; align-items:center; }
+.meta{ color:var(--muted); font-size:.9rem; }
+.divider{ height:1px; background:var(--line); margin:1rem 0; }
+.filter-bar{ background:#fff; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:1rem; }
+.sticky-apply{ position:sticky; top:90px; border:1px solid var(--line); background:#fff; border-radius:var(--radius); padding:1rem; box-shadow:var(--shadow); }
+.job-title{ font-size:1.15rem; font-weight:700; line-height:1.2; }
+.org{ font-weight:600; }

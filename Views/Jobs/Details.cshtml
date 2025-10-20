@@ -1,0 +1,45 @@
+<!-- this page is the Jobs view (Details.cshtml). keeping the layout simple for the capstone demo. -->
+@model JobMatch.Models.Job
+@{
+    ViewData["Title"] = Model.Title;
+    var tags = (Model.TagsCsv ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        .Distinct(StringComparer.OrdinalIgnoreCase).Take(12).ToList();
+}
+<div class="container my-4">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card-job p-4">
+        <h1 class="mb-1">@Model.Title</h1>
+        <div class="meta mb-2">
+          <span class="org">@Model.Organization</span>
+          · <i class="bi bi-geo-alt"></i> @Model.Location
+          · <i class="bi bi-briefcase"></i> @Model.JobType
+          @if (!string.IsNullOrWhiteSpace(Model.SalaryRange))
+          { <text> · <i class="bi bi-currency-dollar"></i> @Model.SalaryRange</text> }
+        </div>
+        @if (tags.Any())
+        {
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            @foreach (var t in tags)
+            { <span class="badge-chip"><i class="bi bi-tag"></i>@t</span> }
+          </div>
+        }
+        <div class="divider"></div>
+        <article class="lead" style="white-space:pre-line">@Model.Description</article>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="sticky-apply">
+        <div class="mb-2"><strong>Posted</strong><br/><span class="meta">@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</span></div>
+        <div class="mb-3"><strong>Company</strong><br/><span class="meta">@Model.Organization</span></div>
+        @if (User.IsInRole("Jobseeker"))
+        {
+          <a class="btn btn-brand w-100 mb-2" asp-controller="Applications" asp-action="Create" asp-route-jobId="@Model.Id">
+            <i class="bi bi-send"></i> Apply now
+          </a>
+        }
+        <a class="btn btn-outline-secondary w-100" asp-action="Index"><i class="bi bi-arrow-left"></i> Back to search</a>
+      </div>
+    </div>
+  </div>
+</div>

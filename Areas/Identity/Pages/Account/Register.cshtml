@@ -1,0 +1,60 @@
+@page
+@model JobMatch.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1 class="mb-3">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.Password" class="form-label"></label>
+                <input asp-for="Input.Password" class="form-control" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <!-- Anyone can choose Jobseeker or Recruiter -->
+            <div class="mb-3">
+                <label class="form-label">Registering as</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio"
+                           asp-for="Input.SelectedRole" value="Jobseeker" checked />
+                    <label class="form-check-label">Jobseeker</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio"
+                           asp-for="Input.SelectedRole" value="Recruiter" />
+                    <label class="form-check-label">Recruiter</label>
+                </div>
+                <span asp-validation-for="Input.SelectedRole" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create account</button>
+        </form>
+
+        <p class="mt-3">
+            Already have an account?
+            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Log in</a>.
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

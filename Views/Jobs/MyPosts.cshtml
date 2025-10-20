@@ -1,0 +1,36 @@
+<!-- this page is the Jobs view (MyPosts.cshtml). keeping the layout simple for the capstone demo. -->
+@model IEnumerable<JobMatch.Models.Job>
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- Section title below -->
+<h2 class="m-0">My Job Posts</h2>
+    <a class="btn btn-brand" asp-action="Create"><i class="bi bi-plus-circle"></i> New Post</a>
+  </div>
+  @if (!Model.Any())
+  {
+    <div class="card-job p-4 text-center">
+      <div class="mb-2"><i class="bi bi-clipboard2-minus" style="font-size:2rem;"></i></div>
+      <h5 class="mb-1">No job posts yet</h5>
+      <p class="meta mb-3">Create your first job post to start receiving applications.</p>
+      <a class="btn btn-brand" asp-action="Create"><i class="bi bi-plus-circle"></i> New Post</a>
+    </div>
+  }
+  else
+  {
+    <div class="vstack gap-3">
+      @foreach (var j in Model)
+      {
+        <div class="card-job p-3 d-flex justify-content-between align-items-center">
+          <div>
+            <div class="job-title mb-1">@j.Title</div>
+            <div class="meta">@j.Organization · @j.Location · @j.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</div>
+          </div>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary" asp-action="Edit" asp-route-id="@j.Id"><i class="bi bi-pencil"></i> Edit</a>
+            <a class="btn btn-outline-secondary" asp-controller="Candidates" asp-action="ForJob" asp-route-jobId="@j.Id"><i class="bi bi-people"></i> Candidates</a>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

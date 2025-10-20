@@ -1,0 +1,21 @@
+<!-- this page is the Dashboard view (Recruiter.cshtml). keeping the layout simple for the capstone demo. -->
+@{
+    ViewData["Title"] = "Recruiter Dashboard";
+}
+<!-- Section title below -->
+<h2>Recruiter Dashboard</h2>
+<section>
+<!-- Section: UI block -->
+    <h3>🧾 Post New Job</h3>
+    <a asp-controller="Jobs" asp-action="Create" class="btn btn-primary">Create Job</a>
+</section>
+<section>
+<!-- Section: UI block -->
+    <h3>👥 Review Applicants</h3>
+    <a asp-controller="Applications" asp-action="Index" class="btn btn-secondary">View Applicants</a>
+</section>
+<section>
+<!-- Section: UI block -->
+    <h3>⭐ Shortlist Candidates</h3>
+    <p>Mark standout candidates for follow-up.</p>
+</section>

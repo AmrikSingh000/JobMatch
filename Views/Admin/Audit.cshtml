@@ -1,0 +1,16 @@
+@model string[]
+@using System.Text.Encodings.Web
+
+@{
+    ViewData["Title"] = "Audit Log";
+}
+
+<h2>Audit Log</h2>
+<p>Latest 500 entries. Format: UTC&nbsp;&nbsp;User&nbsp;&nbsp;Method&nbsp;&nbsp;Path&nbsp;&nbsp;IP</p>
+
+<pre class="p-3 border rounded bg-light" style="max-height: 60vh; overflow:auto;">
+@foreach (var line in Model)
+{
+        @Html.Raw(HtmlEncoder.Default.Encode(line) + "\n")
+}
+</pre>

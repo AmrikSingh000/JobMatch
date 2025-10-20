@@ -1,0 +1,10 @@
+@page
+@model JobMatch.Areas.Identity.Pages.Account.LogoutModel
+@{
+    ViewData["Title"] = "Log out";
+}
+<form method="post">
+    <p>Are you sure you want to log out?</p>
+    <button type="submit" class="btn btn-danger">Log out</button>
+    <a asp-page="./Login" class="btn btn-secondary ms-2">Cancel</a>
+</form>

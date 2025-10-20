@@ -1,0 +1,36 @@
+@model IEnumerable<JobMatch.Models.Job>
+@{
+    ViewData["Title"] = "Jobs";
+}
+<h1>@ViewData["Title"]</h1>
+
+@if (TempData["Flash"] != null)
+{
+    <div class="alert alert-success">@TempData["Flash"]</div>
+}
+
+<form method="get" class="mb-3">
+    <input type="text" name="q" value="@Context.Request.Query["q"]" class="form-control" placeholder="Search jobs..." />
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Organization</th>
+            <th>Location</th>
+            <th>Posted</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var j in Model ?? Enumerable.Empty<JobMatch.Models.Job>())
+        {
+            <tr>
+                <td>@j.Title</td>
+                <td>@j.Organization</td>
+                <td>@j.Location</td>
+                <td>@j.CreatedAt.ToLocalTime()</td>
+            </tr>
+        }
+    </tbody>
+</table>
