@@ -1,45 +1,75 @@
-<!-- this page is the Jobs view (Details.cshtml). keeping the layout simple for the capstone demo. -->
 @model JobMatch.Models.Job
 @{
-    ViewData["Title"] = Model.Title;
-    var tags = (Model.TagsCsv ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-        .Distinct(StringComparer.OrdinalIgnoreCase).Take(12).ToList();
+    ViewData["Title"] = @Model.Title;
 }
-<div class="container my-4">
-  <div class="row g-4">
-    <div class="col-lg-8">
-      <div class="card-job p-4">
-        <h1 class="mb-1">@Model.Title</h1>
-        <div class="meta mb-2">
-          <span class="org">@Model.Organization</span>
-          · <i class="bi bi-geo-alt"></i> @Model.Location
-          · <i class="bi bi-briefcase"></i> @Model.JobType
-          @if (!string.IsNullOrWhiteSpace(Model.SalaryRange))
-          { <text> · <i class="bi bi-currency-dollar"></i> @Model.SalaryRange</text> }
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">@Model.Title</h2>
+        <div class="text-muted">@Model.Organization</div>
+    </div>
+
+    <div class="text-muted mb-2">
+        @Model.Location · @Model.EmploymentType · Posted @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+    </div>
+
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h5>Description</h5>
+            <p class="mb-0" style="white-space:pre-wrap">@Model.Description</p>
         </div>
-        @if (tags.Any())
-        {
-          <div class="d-flex flex-wrap gap-2 mb-3">
-            @foreach (var t in tags)
-            { <span class="badge-chip"><i class="bi bi-tag"></i>@t</span> }
-          </div>
-        }
-        <div class="divider"></div>
-        <article class="lead" style="white-space:pre-line">@Model.Description</article>
-      </div>
     </div>
-    <div class="col-lg-4">
-      <div class="sticky-apply">
-        <div class="mb-2"><strong>Posted</strong><br/><span class="meta">@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</span></div>
-        <div class="mb-3"><strong>Company</strong><br/><span class="meta">@Model.Organization</span></div>
-        @if (User.IsInRole("Jobseeker"))
-        {
-          <a class="btn btn-brand w-100 mb-2" asp-controller="Applications" asp-action="Create" asp-route-jobId="@Model.Id">
-            <i class="bi bi-send"></i> Apply now
-          </a>
-        }
-        <a class="btn btn-outline-secondary w-100" asp-action="Index"><i class="bi bi-arrow-left"></i> Back to search</a>
-      </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.SalaryRange) || !string.IsNullOrWhiteSpace(Model.TagsCsv))
+    {
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(Model.SalaryRange))
+                {
+                    <div><strong>Salary:</strong> @Model.SalaryRange</div>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.TagsCsv))
+                {
+                    <div class="mt-2"><strong>Tags:</strong> @Model.TagsCsv</div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (User.IsInRole("Jobseeker"))
+{
+    <div class="card border-0 shadow-sm mb-3">
+        <div class="card-body">
+            <h5 class="mb-3">Apply for this job</h5>
+            <form asp-controller="Applications" asp-action="Apply" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="mb-3">
+                    <label class="form-label">Cover letter (optional)</label>
+                    <textarea name="coverLetter" rows="5" class="form-control" placeholder="Write a brief message to the recruiter..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Apply</button>
+                <a asp-controller="Applications" asp-action="My" class="btn btn-outline-secondary ms-2">My Applications</a>
+            </form>
+        </div>
     </div>
-  </div>
+}
+
+<div class="d-flex gap-2">
+@if (User.IsInRole("Recruiter") || User.IsInRole("Admin"))
+{
+    <a asp-controller="Applications" asp-action="ForJob" asp-route-id="@Model.Id" class="btn btn-outline-primary">View Applicants</a>
+}
+
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to jobs</a>
+
+        @if (User.IsInRole("Recruiter") || User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edit</a>
+            <form asp-action="ToggleActive" method="post" class="d-inline">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-outline-danger">
+                    @(Model.IsActive ? "Deactivate" : "Activate")
+                </button>
+            </form>
+        }
+    </div>
 </div>

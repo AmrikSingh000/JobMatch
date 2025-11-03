@@ -59,7 +59,7 @@ namespace JobMatch.Areas.Identity.Pages.Account
                 var user = await _userManager.FindByEmailAsync(Input.Email);
                 var landing = await GetLandingUrlForUserAsync(user);
 
-                // Always go to the role dashboard (ignore returnUrl).
+                
                 return LocalRedirect(landing);
 
             }
@@ -80,14 +80,14 @@ namespace JobMatch.Areas.Identity.Pages.Account
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            // Priority: Administrator > Recruiter > Jobseeker
+            
             if (roles.Contains("Administrator"))
                 return Url.Action("Settings", "Admin") ?? Url.Content("~/");
 
             if (roles.Contains("Recruiter"))
                 return Url.Action("Create", "Jobs") ?? Url.Content("~/");
 
-            // Default for Jobseeker or anyone else
+            
             return Url.Action("Index", "Jobs") ?? Url.Content("~/");
         }
     }

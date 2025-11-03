@@ -1,0 +1,37 @@
+@model IEnumerable<JobMatch.Models.JobApplication>
+@{
+    ViewData["Title"] = "My Applications";
+}
+<div class="container mt-4">
+    <h3 class="mb-3">My Applications</h3>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <h4 class="mb-2">You haven't applied to any jobs yet</h4>
+                <a asp-controller="Jobs" asp-action="Index" class="btn btn-primary">Browse Jobs</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="vstack gap-3">
+            @foreach (var a in Model)
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body d-flex justify-content-between">
+                        <div>
+                            <div class="fw-semibold">@a.Job.Title</div>
+                            <div class="text-muted">@a.Job.Organization · @a.Job.Location</div>
+                            <div class="small text-muted mt-1">Applied @a.SubmittedAt.ToLocalTime().ToString("dd MMM yyyy") — @a.Status</div>
+                        </div>
+                        <div>
+                            <a asp-controller="Jobs" asp-action="Details" asp-route-id="@a.JobId" class="btn btn-sm btn-outline-secondary">View Job</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

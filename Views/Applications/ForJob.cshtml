@@ -1,0 +1,62 @@
+@model IEnumerable<JobMatch.Models.JobApplication>
+@using JobMatch.Models
+@{
+    var job = (JobMatch.Models.Job)ViewBag.Job;
+    var users = (System.Collections.Generic.Dictionary<string,string>)ViewBag.UserEmails;
+    ViewData["Title"] = $"Applicants — {job.Title}";
+}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">Applicants — @job.Title</h3>
+        <a asp-controller="Jobs" asp-action="Details" asp-route-id="@job.Id" class="btn btn-outline-secondary">Back to job</a>
+    </div>
+    <div class="text-muted mb-3">@job.Organization · @job.Location</div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <h4 class="mb-2">No applications yet</h4>
+                <a asp-controller="Jobs" asp-action="Details" asp-route-id="@job.Id" class="btn btn-primary">View job</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th>Cover Letter</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td>@(users.ContainsKey(a.ApplicantUserId) ? users[a.ApplicantUserId] : a.ApplicantUserId)</td>
+                        <td>@a.SubmittedAt.ToLocalTime().ToString("dd MMM yyyy")</td>
+                        <td>@a.Status</td>
+                        <td class="small" style="max-width: 380px; white-space: pre-wrap">@a.CoverLetter</td>
+                        <td class="text-end">
+                            <form asp-action="UpdateStatus" method="post" class="d-flex gap-2 align-items-center">
+                                <input type="hidden" name="id" value="@a.Id" />
+                                <select name="status" class="form-select form-select-sm" style="width: 160px;">
+                                    <option value="1" selected="@(a.Status == ApplicationStatus.Submitted ? "selected" : null)">Submitted</option>
+                                    <option value="2" selected="@(a.Status == ApplicationStatus.Shortlisted ? "selected" : null)">Shortlisted</option>
+                                    <option value="3" selected="@(a.Status == ApplicationStatus.Rejected ? "selected" : null)">Rejected</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

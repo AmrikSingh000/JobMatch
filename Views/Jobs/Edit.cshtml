@@ -1,23 +1,56 @@
-<!-- this page is the Jobs view (Edit.cshtml). keeping the layout simple for the capstone demo. -->
 @model JobMatch.Models.Job
-<div class="container my-4">
-  <!-- Section title below -->
-<h2>Edit Job</h2>
-  <form asp-action="Edit" method="post">
-<!-- Form: inputs + submit -->
-    <input type="hidden" asp-for="Id" />
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="mb-3"><label asp-for="Title" class="form-label"></label><input asp-for="Title" class="form-control"/><span asp-validation-for="Title" class="text-danger"></span></div>
-    <div class="mb-3"><label asp-for="Organization" class="form-label"></label><input asp-for="Organization" class="form-control"/><span asp-validation-for="Organization" class="text-danger"></span></div>
-    <div class="mb-3"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" rows="6" class="form-control"></textarea><span asp-validation-for="Description" class="text-danger"></span></div>
-    <div class="mb-3"><label asp-for="Location" class="form-label"></label><input asp-for="Location" class="form-control"/></div>
-    <div class="mb-3"><label asp-for="JobType" class="form-label"></label>
-      <select asp-for="JobType" class="form-select"><option value="">Select</option><option>Full-time</option><option>Part-time</option><option>Contract</option></select>
+@using JobMatch.Models.Enums
+@{
+    ViewData["Title"] = "Edit job";
+}
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h3 class="mb-3">Edit job</h3>
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Organization" class="form-label"></label>
+                        <input asp-for="Organization" class="form-control" />
+                        <span asp-validation-for="Organization" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-12">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" rows="6" class="form-control"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Location" class="form-label"></label>
+                        <input asp-for="Location" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Employment Type</label>
+                        <select asp-for="EmploymentType" class="form-select" asp-items="Html.GetEnumSelectList<EmploymentType>()"></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="SalaryRange" class="form-label"></label>
+                        <input asp-for="SalaryRange" class="form-control" />
+                    </div>
+                    <div class="col-md-12">
+                        <label asp-for="TagsCsv" class="form-label">Tags (comma-separated)</label>
+                        <input asp-for="TagsCsv" class="form-control" />
+                    </div>
+                    <div class="col-md-12 form-check mt-2">
+                        <input class="form-check-input" asp-for="IsActive" />
+                        <label class="form-check-label" asp-for="IsActive">Active</label>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="mb-3"><label asp-for="SalaryRange" class="form-label"></label><input asp-for="SalaryRange" class="form-control" placeholder="$80k–$100k"/></div>
-    <div class="mb-3"><label asp-for="TagsCsv" class="form-label">Tags (comma-separated)</label><input asp-for="TagsCsv" class="form-control" placeholder="C#,ASP.NET,SQL"/></div>
-    <button class="btn btn-brand">Save</button>
-    <a class="btn btn-outline-secondary" asp-action="MyPosts">Back</a>
-  </form>
 </div>
-@section Scripts{ <partial name="_ValidationScriptsPartial" /> }

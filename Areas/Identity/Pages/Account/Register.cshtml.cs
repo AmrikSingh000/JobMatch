@@ -77,13 +77,13 @@ namespace JobMatch.Areas.Identity.Pages.Account
             {
                 _logger.LogInformation("User created a new account with password.");
 
-                // Only allow these two roles from the public UI
+                
                 var allowed = new[] { "Jobseeker", "Recruiter" };
                 var requested = string.IsNullOrWhiteSpace(Input.SelectedRole) ? DEFAULT_ROLE : Input.SelectedRole!;
                 if (!allowed.Contains(requested, StringComparer.OrdinalIgnoreCase))
                     requested = DEFAULT_ROLE;
 
-                // Normalize to canonical role name
+                
                 requested = allowed.First(r => r.Equals(requested, StringComparison.OrdinalIgnoreCase));
 
                 if (await _roleManager.RoleExistsAsync(requested))
@@ -91,20 +91,20 @@ namespace JobMatch.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, requested);
                 }
 
-                // Sign in the new user
+                
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
-                // ➜ Redirect to role dashboard (ignore ReturnUrl on purpose)
+                
                 var roles = await _userManager.GetRolesAsync(user);
 
-                // If your seeder uses "Administrator" (not "Admin"), keep this check as "Administrator"
+                
                 if (roles.Contains("Administrator"))
                     return LocalRedirect(Url.Action("Settings", "Admin") ?? Url.Content("~/"));
 
                 if (roles.Contains("Recruiter"))
                     return LocalRedirect(Url.Action("Create", "Jobs") ?? Url.Content("~/"));
 
-                // Default: Jobseeker
+                
                 return LocalRedirect(Url.Action("Index", "Jobs") ?? Url.Content("~/"));
             }
 

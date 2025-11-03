@@ -1,4 +1,4 @@
-// this file is for 20251016001327_Init.cs. just keeping it simple.
+
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 

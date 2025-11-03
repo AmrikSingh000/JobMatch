@@ -1,36 +1,259 @@
-@model IEnumerable<JobMatch.Models.Job>
+@model JobMatch.Models.ViewModels.JobFilterVM
+@using JobMatch.Models.Enums
 @{
-    ViewData["Title"] = "Jobs";
+    ViewData["Title"] = "Find Jobs";
+    var types = Enum.GetValues(typeof(EmploymentType)).Cast<EmploymentType>();
 }
-<h1>@ViewData["Title"]</h1>
 
-@if (TempData["Flash"] != null)
+<div class="container mt-4">
+@if (User.IsInRole("Recruiter") || User.IsInRole("Admin"))
 {
-    <div class="alert alert-success">@TempData["Flash"]</div>
+    <div class="d-flex justify-content-end mb-3">
+        <a asp-action="Create" class="btn btn-success">Post a job</a>
+    </div>
 }
 
-<form method="get" class="mb-3">
-    <input type="text" name="q" value="@Context.Request.Query["q"]" class="form-control" placeholder="Search jobs..." />
-</form>
+    <!-- Search Bar -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <input type="hidden" name="Page" value="1" />
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Organization</th>
-            <th>Location</th>
-            <th>Posted</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var j in Model ?? Enumerable.Empty<JobMatch.Models.Job>())
-        {
-            <tr>
-                <td>@j.Title</td>
-                <td>@j.Organization</td>
-                <td>@j.Location</td>
-                <td>@j.CreatedAt.ToLocalTime()</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                <div class="col-md-4">
+                    <label asp-for="Q" class="form-label">What</label>
+                    <input asp-for="Q" class="form-control" placeholder="Job title or company" />
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Location" class="form-label">Where</label>
+                    <input asp-for="Location" class="form-control" placeholder="City or region" />
+                </div>
+
+                <div class="col-md-2">
+                    <label asp-for="Type" class="form-label">Type</label>
+                    <select asp-for="Type" class="form-select">
+                        <option value="">Any</option>
+                        @foreach (var t in types)
+                        {
+                            <option value="@t" selected="@(Model.Type == t ? "selected" : null)">@t</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-1">
+                    <label asp-for="Sort" class="form-label">Sort</label>
+                    <select asp-for="Sort" class="form-select">
+                        <option>Newest</option>
+                        <option>Oldest</option>
+                    </select>
+                </div>
+
+                <div class="col-md-1">
+                    <label asp-for="PageSize" class="form-label">Page</label>
+                    <select asp-for="PageSize" class="form-select">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary px-4">
+                        Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Active chips -->
+    @if (Model.Chips.Any())
+    {
+        <div class="mb-3 d-flex flex-wrap gap-2">
+            @if (!string.IsNullOrWhiteSpace(Model.Q))
+            {
+                <a class="badge rounded-pill text-bg-light text-decoration-none px-3 py-2"
+                   asp-action="Index"
+                   asp-route-Q=""
+                   asp-route-Location="@Model.Location"
+                   asp-route-Type=""
+                   asp-route-Sort="@Model.Sort"
+                   asp-route-Page="1"
+                   asp-route-PageSize="@Model.PageSize">
+                    What: @Model.Q <span class="ms-2">&times;</span>
+                </a>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Location))
+            {
+                <a class="badge rounded-pill text-bg-light text-decoration-none px-3 py-2"
+                   asp-action="Index"
+                   asp-route-Q="@Model.Q"
+                   asp-route-Location=""
+                   asp-route-Type=""
+                   asp-route-Sort="@Model.Sort"
+                   asp-route-Page="1"
+                   asp-route-PageSize="@Model.PageSize">
+                    Where: @Model.Location <span class="ms-2">&times;</span>
+                </a>
+            }
+            @if (Model.Type.HasValue)
+            {
+                <a class="badge rounded-pill text-bg-light text-decoration-none px-3 py-2"
+                   asp-action="Index"
+                   asp-route-Q="@Model.Q"
+                   asp-route-Location="@Model.Location"
+                   asp-route-Type=""
+                   asp-route-Sort="@Model.Sort"
+                   asp-route-Page="1"
+                   asp-route-PageSize="@Model.PageSize">
+                    Type: @Model.Type <span class="ms-2">&times;</span>
+                </a>
+            }
+            @if (Model.Sort != "Newest")
+            {
+                <a class="badge rounded-pill text-bg-light text-decoration-none px-3 py-2"
+                   asp-action="Index"
+                   asp-route-Q="@Model.Q"
+                   asp-route-Location="@Model.Location"
+                   asp-route-Type=""
+                   asp-route-Sort="Newest"
+                   asp-route-Page="1"
+                   asp-route-PageSize="@Model.PageSize">
+                    Sort: @Model.Sort <span class="ms-2">&times;</span>
+                </a>
+            }
+            <a class="badge rounded-pill text-bg-secondary text-decoration-none px-3 py-2"
+               asp-action="Index">Clear all</a>
+        </div>
+    }
+
+    <!-- Result count -->
+    <div class="mb-2 text-muted">
+        @Model.Total.ToString() results
+    </div>
+
+    @if (Model.Total == 0)
+    {
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <div style="font-size:2.5rem; line-height:1;">📄</div>
+                <h4 class="mt-3 mb-2">No jobs found</h4>
+                <p class="text-muted">Try clearing filters or searching broader terms.</p>
+                <a asp-action="Index" class="btn btn-outline-secondary">Clear filters</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="vstack gap-3">
+            @foreach (var j in Model.Results)
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h5 class="mb-1">@j.Title</h5>
+                                <div class="text-muted">
+                                    @j.Organization · @j.Location · @j.EmploymentType
+                                </div>
+                            </div>
+                            <div class="text-muted small">
+                                @j.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <a asp-action="Details" asp-route-id="@j.Id" class="btn btn-sm btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    
+    @if (Model.TotalPages > 1)
+    {
+        var window = 2;
+        var start = Math.Max(1, Model.Page - window);
+        var end = Math.Min(Model.TotalPages, Model.Page + window);
+
+        <nav class="mt-4" aria-label="Jobs pagination">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-Q="@Model.Q"
+                       asp-route-Location="@Model.Location"
+                       asp-route-Type="@(Model.Type?.ToString() ?? "")"
+                       asp-route-Sort="@Model.Sort"
+                       asp-route-Page="@(Model.Page - 1)"
+                       asp-route-PageSize="@Model.PageSize">Previous</a>
+                </li>
+
+                @if (start > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-Q="@Model.Q"
+                           asp-route-Location="@Model.Location"
+                           asp-route-Type="@(Model.Type?.ToString() ?? "")"
+                           asp-route-Sort="@Model.Sort"
+                           asp-route-Page="1"
+                           asp-route-PageSize="@Model.PageSize">1</a>
+                    </li>
+                    @if (start > 2)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                }
+
+                @for (var i = start; i <= end; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-Q="@Model.Q"
+                           asp-route-Location="@Model.Location"
+                           asp-route-Type="@(Model.Type?.ToString() ?? "")"
+                           asp-route-Sort="@Model.Sort"
+                           asp-route-Page="@i"
+                           asp-route-PageSize="@Model.PageSize">@i</a>
+                    </li>
+                }
+
+                @if (end < Model.TotalPages)
+                {
+                    if (end < Model.TotalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-Q="@Model.Q"
+                           asp-route-Location="@Model.Location"
+                           asp-route-Type="@(Model.Type?.ToString() ?? "")"
+                           asp-route-Sort="@Model.Sort"
+                           asp-route-Page="@Model.TotalPages"
+                           asp-route-PageSize="@Model.PageSize">@Model.TotalPages</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-Q="@Model.Q"
+                       asp-route-Location="@Model.Location"
+                       asp-route-Type="@(Model.Type?.ToString() ?? "")"
+                       asp-route-Sort="@Model.Sort"
+                       asp-route-Page="@(Model.Page + 1)"
+                       asp-route-PageSize="@Model.PageSize">Next</a>
+                </li>
+            </ul>
+            <div class="text-center text-muted small mt-2">
+                Showing page @Model.Page of @Model.TotalPages — @Model.Total total results
+            </div>
+        </nav>
+    }
+</div>

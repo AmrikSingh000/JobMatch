@@ -10,11 +10,11 @@ namespace JobMatch.Controllers
         private readonly IWebHostEnvironment _env;
         public ResumesController(IWebHostEnvironment env) => _env = env;
 
-        // GET: /Resumes/Upload
+        
         [HttpGet]
         public IActionResult Upload() => View();
 
-        // POST: /Resumes/Upload
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upload(IFormFile file)
@@ -32,7 +32,7 @@ namespace JobMatch.Controllers
             return RedirectToAction(nameof(Matches));
         }
 
-        // GET: /Resumes/Matches
+        
         [HttpGet]
         public IActionResult Matches()
         {
