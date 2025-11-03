@@ -1,4 +1,4 @@
-// this file is for data / EF Core setup (ApplicationDbContext.cs). just keeping it simple.
+
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,5 +12,7 @@ namespace JobMatch.Data
         public DbSet<Resume> Resumes => Set<Resume>();
         public DbSet<JobApplication> JobApplications => Set<JobApplication>();
         public DbSet<MatchScore> MatchScores => Set<MatchScore>();
+        public DbSet<Announcement> Announcements { get; set; } 
+
     }
 }

@@ -2,16 +2,17 @@
 using JobMatch.Data;
 using JobMatch.Data.Seed;
 using JobMatch.Infrastructure;
-// this file is for app startup / DI / routing. just keeping it simple.
+
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 
-// Setup builder (configuration, DI, logging)
+
 var builder = WebApplication.CreateBuilder(args);
-// --- Services (dependency injection) ---
+
+builder.Services.AddTransient<JobMatch.Services.Email.IAppEmailSender, JobMatch.Services.Email.SmtpEmailSender>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -27,10 +28,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 
 builder.Services.AddControllersWithViews();
 
-// Build the app and prepare the HTTP pipeline
+
 var app = builder.Build();
 
-// apply EF migrations, ensure roles + default admin
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -60,7 +61,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// ensure App_Data exists (for audit/settings files)
+
 try
 {
     var appDataDir = Path.Combine(app.Environment.ContentRootPath, "App_Data");
@@ -70,7 +71,7 @@ catch { }
 
 if (app.Environment.IsDevelopment())
 {
-    // --- Middleware
+    
 app.UseMiddleware<AuditMiddleware>(); 
     app.UseMigrationsEndPoint();
 }
@@ -90,7 +91,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// --- Endpoints / routing ---
+
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 app.MapDefaultControllerRoute();

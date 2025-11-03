@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Upload CV";
+}
+<div class="container mt-4">
+    <h2>Upload CV</h2>
+    @if (TempData["Msg"] != null) { <div class="alert alert-info">@TempData["Msg"]</div> }
+    <form asp-action="Upload" method="post" enctype="multipart/form-data" class="vstack gap-3">
+        <div>
+            <input type="file" name="file" class="form-control" accept=".pdf,.doc,.docx,.txt" />
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+    </form>
+    <p class="text-muted mt-3">This simple student stub saves your file under <code>wwwroot/uploads</code>. No parsing is performed here.</p>
+</div>

@@ -1,4 +1,4 @@
-// this file is for 20251016001327_Init.Designer.cs. just keeping it simple.
+
 ﻿
 using System;
 using JobMatch.Data;

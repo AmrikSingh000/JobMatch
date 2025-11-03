@@ -1,0 +1,41 @@
+@model IEnumerable<JobMatch.Models.Job>
+@{
+    ViewData["Title"] = "Matches";
+    string q = (string)(ViewBag.Query ?? "");
+}
+<div class="container mt-4">
+    <h2>Matches</h2>
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input class="form-control" type="text" name="q" value="@q" placeholder="Search by keyword or tag..." />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-secondary">No matches yet — try a broader term.</div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var j in Model)
+            {
+                <a class="list-group-item list-group-item-action" asp-controller="Jobs" asp-action="Details" asp-route-id="@j.Id">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="fw-semibold">@j.Title</div>
+                            <div class="small text-muted">@j.Organization • @j.Location</div>
+                        </div>
+                        <div class="small text-muted">@j.CreatedAt.ToLocalTime().ToString("dd MMM")</div>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(j.TagsCsv))
+                    {
+                        <div class="mt-1 small text-muted">Tags: @j.TagsCsv</div>
+                    }
+                </a>
+            }
+        </div>
+    }
+</div>

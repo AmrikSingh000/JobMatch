@@ -1,4 +1,4 @@
-// this file is for DashboardController controller. just keeping it simple.
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

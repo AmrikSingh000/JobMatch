@@ -16,7 +16,7 @@ using JobMatch.Infrastructure;
 
 namespace JobMatch.Controllers
 {
-    // Small POCO to persist data/privacy settings to App_Data/datapolicy.json
+    
     public class DataPolicySettings
     {
         public int RetentionDays { get; set; } = 365;
@@ -33,7 +33,7 @@ namespace JobMatch.Controllers
         private readonly IHostEnvironment _env = env;
         private readonly ApplicationDbContext _db = db;
 
-        // Lists users with their current role
+        
         public async Task<IActionResult> Users()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -42,14 +42,14 @@ namespace JobMatch.Controllers
             foreach (var user in users)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                // IdentityUser.Email is string? so coalesce to "" to satisfy (string Email)
+                
                 userRoles.Add((user.Id, user.Email ?? string.Empty, roles.FirstOrDefault() ?? "None"));
             }
 
             return View(userRoles);
         }
 
-        // Change a user's role (inline from Users view)
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateRole(string userId, string role)
@@ -68,7 +68,7 @@ namespace JobMatch.Controllers
             return RedirectToAction(nameof(Users));
         }
 
-        // Shows tail of file-based audit log
+        
         public IActionResult Audit()
         {
             var path = AuditLogger.GetAuditLogPath(_env);
@@ -76,16 +76,16 @@ namespace JobMatch.Controllers
 
             var lines = System.IO.File.ReadAllLines(path);
             Array.Reverse(lines);
-            return View(lines.Take(500).ToArray()); // latest 500
+            return View(lines.Take(500).ToArray()); 
         }
 
-        // Very simple system metrics pulled from DB
+        
         public async Task<IActionResult> Metrics()
         {
             var model = new
             {
                 Users = await _userManager.Users.CountAsync(),
-                // Adjust these DbSet names if your context differs
+                
                 Jobs = await _db.Jobs.CountAsync(),
                 Applications = await _db.JobApplications.CountAsync()
             };
@@ -95,7 +95,7 @@ namespace JobMatch.Controllers
         private string SettingsPath =>
             Path.Combine(_env.ContentRootPath, "App_Data", "datapolicy.json");
 
-        // Show / edit privacy & retention settings
+        
         public IActionResult Settings()
         {
             DataPolicySettings settings;

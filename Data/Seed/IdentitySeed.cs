@@ -1,4 +1,4 @@
-// this file is for data / EF Core setup (IdentitySeed.cs). just keeping it simple.
+
 
 using Microsoft.AspNetCore.Identity;
 
@@ -6,7 +6,7 @@ namespace JobMatch.Data.Seed
 {
     public static class IdentitySeed
     {
-// EnsureSeedAsync does the main thing for this file.
+
         public static async Task EnsureSeedAsync(IServiceProvider sp)
         {
             var roles = new[] { "Administrator", "Recruiter", "Jobseeker" };
