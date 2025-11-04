@@ -25,20 +25,22 @@ namespace JobMatch.Controllers
         {
             _context = context;
             _userManager = userManager;
-            _email = email; 
+            _email = email;
         }
 
-        
+        // POST: /Applications/Apply
         [HttpPost]
         [Authorize(Roles = "Jobseeker,Admin,Recruiter")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Apply(int id, string? coverLetter) 
+        public async Task<IActionResult> Apply(int id, string? coverLetter)
         {
-            var job = await _context.Jobs.FirstOrDefaultAsync(j => j.Id == id && j.IsActive);
+            var job = await _context.Jobs
+                .FirstOrDefaultAsync(j => j.Id == id && j.IsActive);
             if (job == null) return NotFound();
 
             var userId = _userManager.GetUserId(User)!;
 
+            // Avoid duplicate applications
             var exists = await _context.JobApplications
                 .AnyAsync(a => a.JobId == id && a.ApplicantUserId == userId);
 
@@ -48,12 +50,14 @@ namespace JobMatch.Controllers
                 return RedirectToAction("Details", "Jobs", new { id });
             }
 
-            
+            // Create new application
             var app = new JobApplication
             {
                 JobId = id,
-                ApplicantUserId = userId
-                
+                ApplicantUserId = userId,
+                SubmittedAt = DateTime.UtcNow,
+                Status = ApplicationStatus.Pending,
+                CoverLetter = coverLetter
             };
 
             _context.JobApplications.Add(app);
@@ -63,7 +67,7 @@ namespace JobMatch.Controllers
             return RedirectToAction(nameof(My));
         }
 
-        
+        // GET: /Applications/My
         [HttpGet]
         [Authorize(Roles = "Jobseeker,Admin,Recruiter")]
         public async Task<IActionResult> My()
@@ -79,7 +83,7 @@ namespace JobMatch.Controllers
             return View(list);
         }
 
-        
+        // GET: /Applications/ForJob/5
         [HttpGet]
         [Authorize(Roles = "Recruiter,Admin")]
         public async Task<IActionResult> ForJob(int id)
@@ -99,10 +103,10 @@ namespace JobMatch.Controllers
                 .OrderByDescending(a => a.SubmittedAt)
                 .ToListAsync();
 
-            
             var userIds = apps.Select(a => a.ApplicantUserId).Distinct().ToList();
-            var users = _context.Users.Where(u => userIds.Contains(u.Id))
-                                      .ToDictionary(u => u.Id, u => u.Email);
+            var users = _context.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionary(u => u.Id, u => u.Email);
 
             ViewBag.Job = job;
             ViewBag.UserEmails = users;
@@ -110,7 +114,7 @@ namespace JobMatch.Controllers
             return View(apps);
         }
 
-        
+        // POST: /Applications/UpdateStatus
         [HttpPost]
         [Authorize(Roles = "Recruiter,Admin")]
         [ValidateAntiForgeryToken]
@@ -134,7 +138,7 @@ namespace JobMatch.Controllers
 
             TempData["Msg"] = "Application status updated.";
 
-            
+            // Attempt to email the applicant (best-effort)
             try
             {
                 var applicant = await _userManager.FindByIdAsync(app.ApplicantUserId);
@@ -147,7 +151,7 @@ namespace JobMatch.Controllers
             }
             catch
             {
-                
+                // ignore email failures
             }
 
             return RedirectToAction(nameof(ForJob), new { id = app.JobId });

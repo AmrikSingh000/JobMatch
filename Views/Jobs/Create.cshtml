@@ -1,14 +1,23 @@
 @model JobMatch.Models.Job
 @using JobMatch.Models.Enums
+
 @{
     ViewData["Title"] = "Post a job";
+    var employmentTypes = Enum.GetValues(typeof(EmploymentType)).Cast<EmploymentType>();
 }
+
 <div class="container mt-4">
     <div class="card shadow-sm border-0">
         <div class="card-body">
-            <h3 class="mb-3">Post a job</h3>
+            <h2 class="mb-4">Post a job</h2>
+
+            @* Show model-level validation errors *@
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
             <form asp-action="Create" method="post">
-                <div class="row g-3">
+                @* Anti-forgery token is added automatically by the tag helper *@
+
+                <div class="row mb-3">
                     <div class="col-md-6">
                         <label asp-for="Title" class="form-label"></label>
                         <input asp-for="Title" class="form-control" />
@@ -19,33 +28,53 @@
                         <input asp-for="Organization" class="form-control" />
                         <span asp-validation-for="Organization" class="text-danger"></span>
                     </div>
-                    <div class="col-md-12">
-                        <label asp-for="Description" class="form-label"></label>
-                        <textarea asp-for="Description" rows="6" class="form-control"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="row mb-3">
                     <div class="col-md-4">
                         <label asp-for="Location" class="form-label"></label>
                         <input asp-for="Location" class="form-control" />
+                        <span asp-validation-for="Location" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Employment Type</label>
-                        <select asp-for="EmploymentType" class="form-select" asp-items="Html.GetEnumSelectList<EmploymentType>()"></select>
+                        <label asp-for="EmploymentType" class="form-label">Employment Type</label>
+                        <select asp-for="EmploymentType" class="form-select">
+                            @foreach (var t in employmentTypes)
+                            {
+                                <option value="@t">@t</option>
+                            }
+                        </select>
+                        <span asp-validation-for="EmploymentType" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label asp-for="SalaryRange" class="form-label"></label>
                         <input asp-for="SalaryRange" class="form-control" />
-                    </div>
-                    <div class="col-md-12">
-                        <label asp-for="TagsCsv" class="form-label">Tags (comma-separated)</label>
-                        <input asp-for="TagsCsv" class="form-control" />
+                        <span asp-validation-for="SalaryRange" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end mt-4">
-                    <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
+
+                <div class="mb-4">
+                    <label asp-for="TagsCsv" class="form-label">Tags (comma-separated)</label>
+                    <input asp-for="TagsCsv" class="form-control" />
+                    <span asp-validation-for="TagsCsv" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @* Enable client-side validation *@
+    <partial name="_ValidationScriptsPartial" />
+}

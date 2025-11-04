@@ -1,11 +1,17 @@
-
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JobMatch.Models
 {
-    public enum ApplicationStatus { Submitted = 1, Shortlisted = 2, Rejected = 3 }
+    public enum ApplicationStatus
+    {
+        Pending = 0,       
+        Submitted = 1,     
+        Shortlisted = 2,   
+        Rejected = 3,      
+        Hired = 4          
+    }
 
     public class JobApplication
     {
@@ -21,9 +27,10 @@ namespace JobMatch.Models
         public string ApplicantUserId { get; set; } = "";
 
         [MaxLength(4000)]
-        public string? CoverLetter { get; set; } 
+        public string? CoverLetter { get; set; }
 
-        public ApplicationStatus Status { get; set; } = ApplicationStatus.Submitted;
+        // Default status when a new application is created
+        public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
 
         public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
     }

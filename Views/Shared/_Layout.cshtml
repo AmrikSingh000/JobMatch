@@ -24,13 +24,18 @@
                         <a class="nav-link text-dark" asp-controller="Jobs" asp-action="Index">Find Jobs</a>
                     </li>
 
+                    @* RECRUITER NAV ITEMS *@
                     @if (User.IsInRole("Recruiter"))
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Jobs" asp-action="Create">Post a Job</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Jobs" asp-action="MyPosts">My Job Posts</a>
+                        </li>
                     }
 
+                    @* JOBSEEKER NAV ITEMS *@
                     @if (User.IsInRole("Jobseeker"))
                     {
                         <li class="nav-item">
@@ -41,6 +46,7 @@
                         </li>
                     }
 
+                    @* ADMIN NAV ITEMS *@
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">

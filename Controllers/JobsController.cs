@@ -17,7 +17,6 @@ namespace JobMatch.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        
         private static readonly int[] AllowedPageSizes = new[] { 10, 20, 50 };
 
         public JobsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
@@ -26,7 +25,9 @@ namespace JobMatch.Controllers
             _userManager = userManager;
         }
 
-        
+        // --------------------------------------------------------------------
+        // FIND JOBS
+        // --------------------------------------------------------------------
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Index([FromQuery] JobFilterVM f)
@@ -56,7 +57,6 @@ namespace JobMatch.Controllers
                 ? query.OrderBy(j => j.CreatedAt)
                 : query.OrderByDescending(j => j.CreatedAt);
 
-            
             f.Page = f.Page <= 0 ? 1 : f.Page;
             f.PageSize = AllowedPageSizes.Contains(f.PageSize) ? f.PageSize : 10;
 
@@ -64,7 +64,6 @@ namespace JobMatch.Controllers
             var skip = (f.Page - 1) * f.PageSize;
             f.Results = await query.Skip(skip).Take(f.PageSize).ToListAsync();
 
-            
             f.Chips.Clear();
             if (!string.IsNullOrWhiteSpace(f.Q))
                 f.Chips.Add(new FilterChip { Key = "Q", Value = f.Q!, Label = $"What: {f.Q}" });
@@ -78,6 +77,9 @@ namespace JobMatch.Controllers
             return View(f);
         }
 
+        // --------------------------------------------------------------------
+        // JOB DETAILS
+        // --------------------------------------------------------------------
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
@@ -87,7 +89,9 @@ namespace JobMatch.Controllers
             return View(job);
         }
 
-        
+        // --------------------------------------------------------------------
+        // CREATE JOB
+        // --------------------------------------------------------------------
         [HttpGet]
         [Authorize(Roles = "Recruiter,Admin")]
         public IActionResult Create()
@@ -100,18 +104,32 @@ namespace JobMatch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Job model)
         {
-            if (!ModelState.IsValid) return View(model);
-
+            // Server-side fields that are not on the form
+            model.PostedByUserId = _userManager.GetUserId(User) ?? "unknown";
             model.CreatedAt = DateTime.UtcNow;
             model.IsActive = true;
-            model.PostedByUserId = _userManager.GetUserId(User) ?? "unknown";
+
+            // Tell MVC not to validate these (we just set them ourselves)
+            ModelState.Remove(nameof(Job.PostedByUserId));
+            ModelState.Remove(nameof(Job.CreatedAt));
+            ModelState.Remove(nameof(Job.IsActive));
+
+            if (!ModelState.IsValid)
+            {
+                // Some other field is invalid – redisplay the form with errors
+                return View(model);
+            }
 
             _context.Jobs.Add(model);
             await _context.SaveChangesAsync();
+
+            // Go to Details for the newly created job
             return RedirectToAction(nameof(Details), new { id = model.Id });
         }
 
-        
+        // --------------------------------------------------------------------
+        // EDIT JOB
+        // --------------------------------------------------------------------
         [HttpGet]
         [Authorize(Roles = "Recruiter,Admin")]
         public async Task<IActionResult> Edit(int id)
@@ -136,7 +154,7 @@ namespace JobMatch.Controllers
             entity.Organization = model.Organization;
             entity.Description = model.Description;
             entity.Location = model.Location;
-            entity.JobType = model.JobType; 
+            entity.JobType = model.JobType;
             entity.SalaryRange = model.SalaryRange;
             entity.TagsCsv = model.TagsCsv;
             entity.EmploymentType = model.EmploymentType;
@@ -146,7 +164,9 @@ namespace JobMatch.Controllers
             return RedirectToAction(nameof(Details), new { id = entity.Id });
         }
 
-        
+        // --------------------------------------------------------------------
+        // TOGGLE ACTIVE
+        // --------------------------------------------------------------------
         [HttpPost]
         [Authorize(Roles = "Recruiter,Admin")]
         [ValidateAntiForgeryToken]
@@ -159,9 +179,9 @@ namespace JobMatch.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
-        
-        
-        
+        // --------------------------------------------------------------------
+        // MY POSTS (RECRUITER DASHBOARD)
+        // --------------------------------------------------------------------
         [HttpGet]
         [Authorize(Roles = "Recruiter,Admin")]
         public async Task<IActionResult> MyPosts(int page = 1, int pageSize = 10)
@@ -175,20 +195,23 @@ namespace JobMatch.Controllers
                 .OrderByDescending(j => j.CreatedAt);
 
             var total = await query.CountAsync();
-            var results = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var results = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
             ViewBag.Total = total;
             ViewBag.Page = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalPages = (int)Math.Ceiling((double)total / pageSize);
 
-            
             var jobIds = results.Select(r => r.Id).ToList();
             var counts = await _context.JobApplications
                 .Where(a => jobIds.Contains(a.JobId))
                 .GroupBy(a => a.JobId)
                 .Select(g => new { JobId = g.Key, C = g.Count() })
                 .ToListAsync();
+
             ViewBag.ApplicantCounts = counts.ToDictionary(x => x.JobId, x => x.C);
 
             return View(results);
