@@ -1,34 +1,115 @@
-@model IEnumerable<(string Id, string Email, string Role)>
+@model List<JobMatch.Models.ViewModels.AdminUserVM>
+
 @{
-    ViewData["Title"] = "User Management";
+    ViewData["Title"] = "Manage Users & Roles";
 }
-<h2>User Management</h2>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Change</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach (var user in Model)
+
+<div class="container mt-4">
+    <h2 class="mb-4">Manage Users &amp; Roles</h2>
+
+    @if (TempData["Msg"] is string msg)
     {
-        <tr>
-            <td>@user.Email</td>
-            <td>@user.Role</td>
-            <td>
-                <form asp-action="UpdateRole" method="post" class="d-flex gap-2">
-                    <input type="hidden" name="userId" value="@user.Id" />
-                    <select name="role" class="form-select form-select-sm" style="width: 160px;">
-                        <option value="Jobseeker" selected="@(user.Role == "Jobseeker")">Jobseeker</option>
-                        <option value="Recruiter" selected="@(user.Role == "Recruiter")">Recruiter</option>
-                        <option value="Admin" selected="@(user.Role == "Admin")">Admin</option>
-                    </select>
-                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
-                </form>
-            </td>
-        </tr>
+        <div class="alert alert-info">@msg</div>
     }
-    </tbody>
-</table>
+
+    @if (!Model.Any())
+    {
+        <p class="text-muted">No users found.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Jobseeker</th>
+                        <th>Recruiter</th>
+                        <th>Admin</th>
+                        <th>Status</th>
+                        <th style="width: 180px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td>@u.Email</td>
+                            <td>@u.UserName</td>
+                            <td>
+                                <form asp-action="UpdateUserRoles" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@u.Id" />
+                                    <input type="hidden" name="isRecruiter" value="@u.IsRecruiter" />
+                                    <input type="hidden" name="isAdmin" value="@u.IsAdmin" />
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="isJobseeker"
+                                           value="true"
+                                           @(u.IsJobseeker ? "checked" : "")
+                                           onchange="this.form.submit();" />
+                                </form>
+                            </td>
+                            <td>
+                                <form asp-action="UpdateUserRoles" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@u.Id" />
+                                    <input type="hidden" name="isJobseeker" value="@u.IsJobseeker" />
+                                    <input type="hidden" name="isAdmin" value="@u.IsAdmin" />
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="isRecruiter"
+                                           value="true"
+                                           @(u.IsRecruiter ? "checked" : "")
+                                           onchange="this.form.submit();" />
+                                </form>
+                            </td>
+                            <td>
+                                <form asp-action="UpdateUserRoles" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@u.Id" />
+                                    <input type="hidden" name="isJobseeker" value="@u.IsJobseeker" />
+                                    <input type="hidden" name="isRecruiter" value="@u.IsRecruiter" />
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           name="isAdmin"
+                                           value="true"
+                                           @(u.IsAdmin ? "checked" : "")
+                                           onchange="this.form.submit();" />
+                                </form>
+                            </td>
+                            <td>
+                                @if (u.IsLockedOut)
+                                {
+                                    <span class="badge bg-danger">Locked</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!u.IsLockedOut)
+                                {
+                                    <form asp-action="LockUser" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@u.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            Lock
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="UnlockUser" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@u.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            Unlock
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
