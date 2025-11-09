@@ -29,6 +29,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddControllersWithViews();
 
 
+builder.Services.AddScoped<JobMatch.Services.CoverLetters.ICoverLetterGenerator, JobMatch.Services.CoverLetters.SimpleCoverLetterGenerator>();
+
 var app = builder.Build();
 
 

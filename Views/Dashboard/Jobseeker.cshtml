@@ -1,17 +1,16 @@
-<!-- this page is the Dashboard view (Jobseeker.cshtml). keeping the layout simple for the capstone demo. -->
 @{
     ViewData["Title"] = "Jobseeker Dashboard";
 }
-<!-- Section title below -->
+
 <h2>Welcome, @User.Identity?.Name</h2>
 <section>
-<!-- Section: UI block -->
+
     <h3>📄 Upload CV</h3>
     <p>Upload your CV to improve matching accuracy.</p>
     <a asp-controller="Applications" asp-action="Create" class="btn btn-primary">Upload / Apply</a>
 </section>
 <section>
-<!-- Section: UI block -->
+
     <h3>🧭 Track Applications</h3>
     <p>View your current job applications and their statuses.</p>
     <a asp-controller="Applications" asp-action="Mine" class="btn btn-secondary">View Applications</a>

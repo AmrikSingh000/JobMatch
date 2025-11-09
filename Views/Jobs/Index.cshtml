@@ -13,7 +13,7 @@
         </div>
     }
 
-    <!-- Search Bar -->
+    
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
             <form asp-action="Index" method="get" class="row g-3 align-items-end">
@@ -66,7 +66,7 @@
         </div>
     </div>
 
-    <!-- Active chips -->
+    
     @if (Model.Chips.Any())
     {
         <div class="mb-3 d-flex flex-wrap gap-2">
@@ -127,7 +127,7 @@
         </div>
     }
 
-    <!-- Result count -->
+    
     <div class="mb-2 text-muted">
         @Model.Total.ToString() results
     </div>
@@ -169,7 +169,7 @@
                                 View
                             </a>
 
-                            @* Apply button posts to ApplicationsController.Apply *@
+                            
                             @if (User.IsInRole("Jobseeker") || User.IsInRole("Admin") || User.IsInRole("Recruiter"))
                             {
                                 <form asp-controller="Applications"

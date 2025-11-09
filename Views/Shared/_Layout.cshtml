@@ -24,7 +24,7 @@
                         <a class="nav-link text-dark" asp-controller="Jobs" asp-action="Index">Find Jobs</a>
                     </li>
 
-                    @* RECRUITER NAV ITEMS *@
+                    
                     @if (User.IsInRole("Recruiter"))
                     {
                         <li class="nav-item">
@@ -35,8 +35,10 @@
                         </li>
                     }
 
-                    @* JOBSEEKER NAV ITEMS *@
-                    @if (User.IsInRole("Jobseeker"))
+                    
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        if (User.IsInRole("Jobseeker"))
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Cv" asp-action="Upload">Upload CV</a>
@@ -44,9 +46,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Matches" asp-action="Index">Matches</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="CoverLetters" asp-action="Create">Cover Letter</a>
+                        </li>
+                        }
                     }
 
-                    @* ADMIN NAV ITEMS *@
+                    
                     @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">

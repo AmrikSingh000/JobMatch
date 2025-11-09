@@ -1,0 +1,68 @@
+@model JobMatch.Models.ViewModels.CoverLetterRequest
+@{
+    ViewData["Title"] = "Generate Cover Letter";
+    var resumes = (IEnumerable<JobMatch.Models.Resume>)ViewBag.Resumes;
+    var jobs = (IEnumerable<JobMatch.Models.Job>)ViewBag.Jobs;
+}
+<h2>Cover Letter Generator</h2>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Resume</h4>
+            <select asp-for="ResumeId" class="form-control">
+                <option value="">-- Select a resume --</option>
+                @foreach (var r in resumes)
+                {
+                    <option value="@r.Id">@($"{r.Id} · {r.ParsedName ?? System.IO.Path.GetFileName(r.FilePath)}")</option>
+                }
+            </select>
+            <small class="text-muted">Uses parsed fields if available (name, skills, experience).</small>
+        </div>
+        <div class="col-md-6">
+            <h4>Job</h4>
+            <select id="jobSelect" class="form-control" onchange="onJobChange()">
+                <option value="">-- Optional: pick a job --</option>
+                @foreach (var j in jobs)
+                {
+                    <option value="@j.Id" data-title="@j.Title" data-company="@j.Organization" data-desc="@j.Description">
+                        @($"{j.Id} · {j.Title} @ {j.Organization}")
+                    </option>
+                }
+            </select>
+            <div class="form-group mt-2">
+                <label asp-for="JobTitle"></label>
+                <input asp-for="JobTitle" class="form-control" placeholder="e.g., Senior Software Engineer"/>
+            </div>
+            <div class="form-group mt-2">
+                <label asp-for="Company"></label>
+                <input asp-for="Company" class="form-control" placeholder="e.g., Acme Corp"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group mt-3">
+        <label asp-for="JobDescription"></label>
+        <textarea asp-for="JobDescription" class="form-control" rows="10" placeholder="Paste the job posting here"></textarea>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Generate</button>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+function onJobChange() {
+    const sel = document.getElementById('jobSelect');
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.value) return;
+    const title = opt.getAttribute('data-title') || '';
+    const company = opt.getAttribute('data-company') || '';
+    const desc = opt.getAttribute('data-desc') || '';
+    document.querySelector('input[name="JobTitle"]').value = title;
+    document.querySelector('input[name="Company"]').value = company;
+    document.querySelector('textarea[name="JobDescription"]').value = desc;
+}
+</script>
+}
