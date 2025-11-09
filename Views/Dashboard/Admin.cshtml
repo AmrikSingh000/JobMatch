@@ -1,21 +1,20 @@
-<!-- this page is the Dashboard view (Admin.cshtml). keeping the layout simple for the capstone demo. -->
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
-<!-- Section title below -->
+
 <h2>Admin Control Panel</h2>
 <section>
-<!-- Section: UI block -->
+
     <h3>👤 Manage Users</h3>
     <a asp-controller="Admin" asp-action="Users" class="btn btn-primary">User Management</a>
 </section>
 <section>
-<!-- Section: UI block -->
+
     <h3>📊 Monitor System Data</h3>
     <a asp-controller="Admin" asp-action="Audit" class="btn btn-secondary">Audit Logs</a>
 </section>
 <section>
-<!-- Section: UI block -->
+
     <h3>⚙️ System Settings</h3>
     <a asp-controller="Admin" asp-action="Settings" class="btn btn-light">Configuration</a>
 </section>

@@ -11,11 +11,11 @@
         <div class="card-body">
             <h2 class="mb-4">Post a job</h2>
 
-            @* Show model-level validation errors *@
+            
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <form asp-action="Create" method="post">
-                @* Anti-forgery token is added automatically by the tag helper *@
+                
 
                 <div class="row mb-3">
                     <div class="col-md-6">
@@ -75,6 +75,6 @@
 </div>
 
 @section Scripts {
-    @* Enable client-side validation *@
+    
     <partial name="_ValidationScriptsPartial" />
 }

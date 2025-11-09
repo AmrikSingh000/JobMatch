@@ -1,0 +1,34 @@
+@model JobMatch.Models.ViewModels.CoverLetterRequest
+@{
+    ViewData["Title"] = "Cover Letter Preview";
+}
+<h2>Preview</h2>
+
+<div class="mb-3">
+    <button class="btn btn-secondary" onclick="copyLetter()">Copy</button>
+    <button class="btn btn-outline-secondary" onclick="downloadTxt()">Download .txt</button>
+</div>
+
+<pre style="white-space:pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; border: 1px solid #ddd; padding: 1rem; border-radius: .5rem;">
+@Model.GeneratedLetter
+</pre>
+
+@section Scripts {
+<script>
+function copyLetter() {
+    const text = `@Model.GeneratedLetter`.replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&amp;','&');
+    navigator.clipboard.writeText(text);
+    alert('Copied to clipboard');
+}
+function downloadTxt() {
+    const text = `@Model.GeneratedLetter`.replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&amp;','&');
+    const blob = new Blob([text], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cover-letter.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+</script>
+}
