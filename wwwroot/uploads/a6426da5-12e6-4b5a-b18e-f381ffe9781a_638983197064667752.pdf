@@ -1,0 +1,48 @@
+%PDF-1.4
+%ÿÿÿÿ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1018 >>
+stream
+BT /F1 12 Tf 72 720 Td (Alex Nguyen) Tj ET
+BT /F1 12 Tf 72 704 Td (Email: alex.nguyen@example.com  Phone: \(555\) 222-8899  Location: Christchurch, NZ) Tj ET
+BT /F1 12 Tf 72 688 Td () Tj ET
+BT /F1 12 Tf 72 672 Td (SUMMARY) Tj ET
+BT /F1 12 Tf 72 656 Td (Data analyst with strong SQL/Python skills; builds clear dashboards and actionable insights.) Tj ET
+BT /F1 12 Tf 72 640 Td () Tj ET
+BT /F1 12 Tf 72 624 Td (SKILLS: SQL, Python, Pandas, Power BI, Excel, A/B testing, Statistics) Tj ET
+BT /F1 12 Tf 72 608 Td () Tj ET
+BT /F1 12 Tf 72 592 Td (EXPERIENCE) Tj ET
+BT /F1 12 Tf 72 576 Td (Data Analyst â€” InsightWorks \(2021â€“Present\)) Tj ET
+BT /F1 12 Tf 72 560 Td (- Built Power BI suite; reduced reporting time by 70%.) Tj ET
+BT /F1 12 Tf 72 544 Td (- Wrote Python ETL jobs for CRM data quality.) Tj ET
+BT /F1 12 Tf 72 528 Td () Tj ET
+BT /F1 12 Tf 72 512 Td (EDUCATION) Tj ET
+BT /F1 12 Tf 72 496 Td (BCom in Information Systems â€” University of Canterbury) Tj ET
+BT /F1 12 Tf 72 480 Td (Date: November 09, 2025) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000001317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1387
+%%EOF
